@@ -1,13 +1,18 @@
 export const decorateTerm = (Term, {React}) => class extends React.Component {
 	render() {
-		const {customChildren} = this.props;
+		const {customChildren, session} = this.props;
+
 		return <Term {...this.props} customChildren={
 			[]
 				.concat(customChildren)
 				.concat(
-					<h1>it works!</h1>
+					<h1>{session.cwd}</h1>
 				)
 			}
 		/>;
 	}
 };
+
+export const getTermProps = (uid, parentProps, props) => Object.assign(props, {
+	session: parentProps.sessions[uid]
+});
