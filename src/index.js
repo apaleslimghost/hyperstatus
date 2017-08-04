@@ -1,4 +1,6 @@
 import React from 'react';
+import tildePath from 'tilde-path';
+import {FileDirectoryIcon} from 'react-octicons-svg';
 
 export const decorateConfig = config => Object.assign(config, {
 	css: `
@@ -19,11 +21,23 @@ export const decorateConfig = config => Object.assign(config, {
 			font-size: 12px;
 			line-height: 24px;
 		}
+
+		.status_item .octicons {
+			vertical-align: text-bottom;
+			margin-right: .6em;
+		}
+
+		.octicons {
+			fill: currentColor;
+		}
 	`
 });
 
 const Status = ({session}) => <footer className='status_status'>
-	<div className='status_item status_left'>{session.cwd}</div>
+	<div className='status_item status_left'>
+		<FileDirectoryIcon />
+		{session.cwd && tildePath(session.cwd)}
+	</div>
 </footer>;
 
 export const decorateTerm = (Term, {React}) => class extends React.Component {
