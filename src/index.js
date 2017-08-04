@@ -1,3 +1,31 @@
+import React from 'react';
+
+export const decorateConfig = config => Object.assign(config, {
+	css: `
+		${config.css || ''}
+
+		.term_term {
+			padding-bottom: 36px;
+		}
+
+		.status_status {
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			height: 36px;
+			background: rgba(255,255,255,0.05);
+			padding: 6px 14px;
+			font-size: 12px;
+			line-height: 24px;
+		}
+	`
+});
+
+const Status = ({session}) => <footer className='status_status'>
+	<div className='status_item status_left'>{session.cwd}</div>
+</footer>;
+
 export const decorateTerm = (Term, {React}) => class extends React.Component {
 	render() {
 		const {customChildren, session} = this.props;
@@ -6,7 +34,7 @@ export const decorateTerm = (Term, {React}) => class extends React.Component {
 			[]
 				.concat(customChildren)
 				.concat(
-					<h1>{session.cwd}</h1>
+					<Status session={session} />
 				)
 			}
 		/>;
