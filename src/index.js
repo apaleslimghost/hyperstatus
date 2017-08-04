@@ -1,6 +1,7 @@
 import React from 'react';
 import tildePath from 'tilde-path';
 import {FileDirectoryIcon, HomeIcon} from 'react-octicons-svg';
+import {isGit, check} from 'git-state';
 
 export const decorateConfig = config => Object.assign(config, {
 	css: `
@@ -56,12 +57,14 @@ const FolderItem = ({session}) => {
 	</div>;
 };
 
+const GitItem = ({session}) => null;
+
 const Status = ({session}) => <footer className='status_status'>
 	<div class='status_group status_left'>
 		<FolderItem session={session} />
 	</div>
 	<div class='status_group status_right'>
-
+		<GitItem session={session} />
 	</div>
 </footer>;
 
@@ -83,3 +86,35 @@ export const decorateTerm = (Term, {React}) => class extends React.Component {
 export const getTermProps = (uid, parentProps, props) => Object.assign(props, {
 	session: parentProps.sessions[uid]
 });
+
+export const middleware = store => next => action => {
+	switch(action.type) {
+		case 'SESSION_SET_CWD':
+			store.dispatch(dispatch => {
+				isGit(action.cwd, is => {
+					if(is) {
+						check(action.cwd, (err, gitState) => {
+							if(!err) {
+								dispatch({
+									type: 'SESSION_SET_GIT',
+									gitState,
+								});
+							}
+						});
+					}
+				});
+			});
+			next(action);
+		default:
+			next(action);
+	}
+};
+
+export const reduceSessions = (action, state) => {
+	switch(action.type) {
+		case 'SESSION_SET_GIT':
+			return state.setIn(['sessions', state.activeUid, 'git'], action.gitState);
+		default:
+			return state;
+	}
+};

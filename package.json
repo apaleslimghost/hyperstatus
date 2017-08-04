@@ -15,6 +15,7 @@
     "babel-preset-react": "^6.24.1"
   },
   "dependencies": {
+    "git-state": "^4.0.0",
     "react": "^15.6.1",
     "react-octicons-svg": "^1.2.4",
     "tilde-path": "^2.0.0"
