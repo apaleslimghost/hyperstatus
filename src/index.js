@@ -1,6 +1,6 @@
 import React from 'react';
 import tildePath from 'tilde-path';
-import {FileDirectoryIcon} from 'react-octicons-svg';
+import {FileDirectoryIcon, HomeIcon} from 'react-octicons-svg';
 
 export const decorateConfig = config => Object.assign(config, {
 	css: `
@@ -33,12 +33,17 @@ export const decorateConfig = config => Object.assign(config, {
 	`
 });
 
-const Status = ({session}) => <footer className='status_status'>
-	<div className='status_item status_left'>
-		<FileDirectoryIcon />
-		{session.cwd && tildePath(session.cwd)}
-	</div>
-</footer>;
+const Status = ({session}) => {
+	const shortPath = session.cwd && tildePath(session.cwd);
+	return <footer className='status_status'>
+		<div className='status_item status_left'>
+			{ shortPath === '~'
+				? <HomeIcon />
+				: <FileDirectoryIcon />}
+			{shortPath}
+		</div>
+	</footer>
+};
 
 export const decorateTerm = (Term, {React}) => class extends React.Component {
 	render() {
