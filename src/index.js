@@ -11,6 +11,7 @@ export const decorateConfig = config => Object.assign(config, {
 		}
 
 		.status_status {
+			display: flex;
 			position: absolute;
 			left: 0;
 			right: 0;
@@ -20,6 +21,18 @@ export const decorateConfig = config => Object.assign(config, {
 			padding: 6px 14px;
 			font-size: 12px;
 			line-height: 24px;
+		}
+
+		.status_group {
+			display: flex;
+		}
+
+		.status_left {
+			margin-right: auto;
+		}
+
+		.status_right {
+			margin-left: auto;
 		}
 
 		.status_item .octicons {
@@ -33,17 +46,24 @@ export const decorateConfig = config => Object.assign(config, {
 	`
 });
 
-const Status = ({session}) => {
+const FolderItem = ({session}) => {
 	const shortPath = session.cwd && tildePath(session.cwd);
-	return <footer className='status_status'>
-		<div className='status_item status_left'>
-			{ shortPath === '~'
-				? <HomeIcon />
-				: <FileDirectoryIcon />}
-			{shortPath}
-		</div>
-	</footer>
+	return <div className='status_item'>
+		{ shortPath === '~'
+			? <HomeIcon />
+			: <FileDirectoryIcon />}
+		{shortPath}
+	</div>;
 };
+
+const Status = ({session}) => <footer className='status_status'>
+	<div class='status_group status_left'>
+		<FolderItem session={session} />
+	</div>
+	<div class='status_group status_right'>
+
+	</div>
+</footer>;
 
 export const decorateTerm = (Term, {React}) => class extends React.Component {
 	render() {
