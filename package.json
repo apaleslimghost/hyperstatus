@@ -18,6 +18,7 @@
     "@quarterto/promisify": "^1.0.0",
     "find-up": "^2.1.0",
     "git-state": "^4.0.0",
+    "lodash.debounce": "^4.0.8",
     "react": "^15.6.1",
     "react-octicons-svg": "^1.2.4",
     "tilde-path": "^2.0.0"

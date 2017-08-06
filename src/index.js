@@ -12,11 +12,11 @@ import {isGit as _isGit, check as _check} from 'git-state';
 import promisify from '@quarterto/promisify';
 import findUp from 'find-up';
 import path from 'path';
+import debounce from 'lodash.debounce';
 
 const check = promisify(_check);
 const isGit = promisify((...args) => {
 	const cb = args.pop();
-	console.log(args);
 	return _isGit(...args, is => cb(null, is));
 });
 
@@ -139,25 +139,34 @@ export const getTermProps = (uid, parentProps, props) => Object.assign(props, {
 	session: parentProps.sessions[uid]
 });
 
+const dispatchGitInfo = debounce((store, action) => {
+	store.dispatch({
+		type: 'SESSION_SET_GIT',
+		gitState: null
+	});
+
+	store.dispatch(dispatch => {
+		findUp('.git', {cwd: action.cwd})
+			.then(path.dirname)
+			.then(gitDir =>
+				isGit(gitDir)
+					.then(guard)
+					.then(() => check(gitDir))
+			)
+			.then(gitState =>
+				dispatch({
+					type: 'SESSION_SET_GIT',
+					gitState,
+				}),
+				() => {}
+			);
+	});
+}, 300);
+
 export const middleware = store => next => action => {
 	switch(action.type) {
 		case 'SESSION_SET_CWD':
-			store.dispatch(dispatch => {
-				findUp('.git', {cwd: action.cwd})
-					.then(path.dirname)
-					.then(gitDir =>
-						isGit(gitDir)
-							.then(guard)
-							.then(() => check(gitDir))
-					)
-					.then(gitState =>
-						dispatch({
-							type: 'SESSION_SET_GIT',
-							gitState,
-						})
-					)
-					.catch(console.error);
-			});
+			dispatchGitInfo(store, action);
 			next(action);
 		default:
 			next(action);
